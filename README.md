@@ -6,3 +6,4 @@ Dependencies:
 - xbacklight, set the backlight of the screen
 - feh, to change wallpaper
 - xwd, to take screenshots
+- amixer, to control sound
