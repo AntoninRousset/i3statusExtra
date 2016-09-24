@@ -1,6 +1,17 @@
+set $i3Folder ~/.i3
+
+set $mod Mod4
+set $brightnessUp XF86MonBrightnessUp
+set $brightnessDown XF86MonBrightnessDown
+set $volumeUp XF86AudioRaiseVolume 
+set $volumeDown XF86AudioLowerVolume
+set $volumeMute XF86AudioMute 
+set $wallpaperKey XF86LaunchA 
+set $screenshotKey XF86LaunchB 
+
+
 #exec feh --bg-fill "$HOME/.wallpaper"
 exec ~/.i3/changeWallpaper.sh
-set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -21,9 +32,9 @@ bindsym $mod+d exec dmenu_run -i
 bindsym $mod+Return exec roxterm;
 bindsym $mod+dollar exec roxterm -e ranger
 #bindsym $mod+dollar exec pcmanfm
-bindsym $mod+section exec chromium
-bindsym XF86LaunchA exec ~/.i3/changeWallpaper.sh
-bindsym XF86LaunchB exec ~/.i3/takeScreenshot.sh
+bindsym $mod+exclam exec chromium
+bindsym $wallpaperKey exec $i3Folder/changeWallpaper.sh
+bindsym $screenshotKey exec $i3Folder/takeScreenshot.sh
 
 # borderless
 bindsym $mod+Shift+f "border none"
@@ -108,29 +119,22 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-#bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
-bindsym $mod+Shift+e exit
+bindsym $mod+Shift+e i3-msg exit
 
 # sound
-bindsym XF86AudioLowerVolume exec amixer -q -c 0 set Master 10- unmute && killall -USR1 i3status
-bindsym XF86AudioRaiseVolume exec amixer -q -c 0 set Master 10+ unmute && killall -USR1 i3status
-#bindsym XF86AudioLowerVolume exec amixer -q -c 1 set PCM 10- unmute && killall -USR1 i3status
-#bindsym XF86AudioRaiseVolume exec amixer -q -c 1 set PCM 10+ unmute && killall -USR1 i3status
-bindsym XF86AudioMute exec amixer -q -c 0 set Master toggle && killall -USR1 i3status
-bindsym Shift+XF86AudioMute exec aplay ~/.i3/Volume.wav
-bindsym Shift+XF86AudioLowerVolume exec amixer -q -c 0 set Master 1- unmute && killall -USR1 i3status
+bindsym $volumeUp exec $i3Folder/volume.sh up && $i3Folder/refreshStatus.sh
+bindsym $volumeDown exec $i3Folder/volume.sh down  && $i3Folder/refreshStatus.sh
+bindsym $volumeMute exec $i3Folder/Volume.sh mute && $i3Folder/refreshStatus.sh
+bindsym Shift+$volumeUp exec $i3Folder/volume.sh UP && $i3Folder/refreshStatus.sh
+bindsym Shift+$volumeDown exec $i3Folder/volume.sh DOWN  && $i3Folder/refreshStatus.sh
 
 # brightness
-bindsym XF86MonBrightnessDown exec sudo brightness -10 && killall -USR1 i3status
-bindsym XF86MonBrightnessUp exec sudo brightness +10 && killall -USR1 i3status
-bindsym Shift+XF86MonBrightnessDown exec sudo brightness -1 && killall -USR1 i3status
-bindsym Shift+XF86MonBrightnessUp exec sudo brightness +1 && killall -USR1 i3status
-bindsym $mod+XF86MonBrightnessDown exec sudo brightness off  && killall -USR1 i3status
-bindsym $mod+XF86MonBrightnessUp exec sudo brightness on && killall -USR1 i3status
-
-# hibernate
-bindsym XF86PowerOff exec sudo pm-hibernate
-bindsym $mod+XF86PowerOff exec sudo poweroff
+bindsym $brightnessUp exec $i3Folder/bl-brightness.sh up && $i3Folder/refreshStatus.sh
+bindsym $brightnessDown exec $i3Folder/bl-brightness.sh down && $i3Folder/refreshStatus.sh
+bindsym Shift+$brightnessUp exec $i3Folder/bl-brightness.sh UP && $i3Folder/refreshStatus.sh
+bindsym Shift+$brightnessDown exec $i3Folder/bl-brightness.sh DOWN && $i3Folder/refreshStatus.sh
+bindsym $mod+$brightnessUp exec $i3Folder/bl-brightness.sh on && $i3Folder/refreshStatus.sh
+bindsym $mod+$brightnessDown exec $i3Folder/bl-brightness.sh off && $i3Folder/refreshStatus.sh
 
 # you're stupid if you remove this
 workspace_auto_back_and_forth yes
@@ -159,10 +163,9 @@ mode "shortcuts" {
 bindsym $mod+x exec ~/.i3/shortcutsBar.sh enable; mode "shortcuts"
 
 bar {
-        status_command .i3/i3status.sh
+        status_command $i3Folder/i3status.sh
 	#font pango:DejaVu Sans Mono 6
 	font pango:Source Code Pro 6
-
 
 	colors {
 		background #161616
