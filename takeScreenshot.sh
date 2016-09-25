@@ -1,8 +1,8 @@
-#! /bin/sh
+#! /bin/bash
 
-screenshotsFolder="$HOME/Images"
-screenshotName="Screenshot-$(date +"%d_%m_%y-%k:%M:%S")"
-screenshotFormat="tiff"
+source ~/.i3/i3statusExtra.conf
 
-xwd -root > "${screenshotsFolder}/${screenshotName}"'.xwd' && convert "${screenshotsFolder}/${screenshotName}.xwd" "${screenshotsFolder}/${screenshotName}.${screenshotFormat}" && rm "${screenshotsFolder}/${screenshotName}.xwd" && $HOME/.i3/i3status.sh notify "Screenshot saved in ${screenshotsFolder}/${screenshotName}.${screenshotFormat}"
+eval path="$ss_folder/$ss_name.$ss_format"
+
+xwd -root | convert xwd:- "$path" && ~/.i3/i3status.sh notify "Screenshot saved in $path.$ss_format"
 
