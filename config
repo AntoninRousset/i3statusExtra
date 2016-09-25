@@ -1,5 +1,3 @@
-set $i3Folder ~/.i3
-
 set $mod Mod4
 set $brightnessUp XF86MonBrightnessUp
 set $brightnessDown XF86MonBrightnessDown
@@ -33,8 +31,8 @@ bindsym $mod+Return exec roxterm;
 bindsym $mod+dollar exec roxterm -e ranger
 #bindsym $mod+dollar exec pcmanfm
 bindsym $mod+exclam exec chromium
-bindsym $wallpaperKey exec $i3Folder/changeWallpaper.sh
-bindsym $screenshotKey exec $i3Folder/takeScreenshot.sh
+bindsym $wallpaperKey exec ~/.i3/changeWallpaper.sh
+bindsym $screenshotKey exec ~/.i3/takeScreenshot.sh
 
 # borderless
 bindsym $mod+Shift+f "border none"
@@ -122,19 +120,19 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e i3-msg exit
 
 # sound
-bindsym $volumeUp exec $i3Folder/volume.sh up && $i3Folder/refreshStatus.sh
-bindsym $volumeDown exec $i3Folder/volume.sh down  && $i3Folder/refreshStatus.sh
-bindsym $volumeMute exec $i3Folder/Volume.sh mute && $i3Folder/refreshStatus.sh
-bindsym Shift+$volumeUp exec $i3Folder/volume.sh UP && $i3Folder/refreshStatus.sh
-bindsym Shift+$volumeDown exec $i3Folder/volume.sh DOWN  && $i3Folder/refreshStatus.sh
+bindsym $volumeUp exec sh ~/.i3/volume.sh up && sh ~/.i3/refreshStatus.sh
+bindsym $volumeDown exec sh ~/.i3/volume.sh down && sh ~/.i3/refreshStatus.sh
+bindsym $volumeMute exec sh ~/.i3/volume.sh mute && sh ~/.i3/refreshStatus.sh
+bindsym Shift+$volumeUp exec sh ~/.i3/volume.sh UP && sh ~/.i3/refreshStatus.sh
+bindsym Shift+$volumeDown exec sh ~/.i3/volume.sh DOWN && sh ~/.i3/refreshStatus.sh
 
 # brightness
-bindsym $brightnessUp exec $i3Folder/bl-brightness.sh up && $i3Folder/refreshStatus.sh
-bindsym $brightnessDown exec $i3Folder/bl-brightness.sh down && $i3Folder/refreshStatus.sh
-bindsym Shift+$brightnessUp exec $i3Folder/bl-brightness.sh UP && $i3Folder/refreshStatus.sh
-bindsym Shift+$brightnessDown exec $i3Folder/bl-brightness.sh DOWN && $i3Folder/refreshStatus.sh
-bindsym $mod+$brightnessUp exec $i3Folder/bl-brightness.sh on && $i3Folder/refreshStatus.sh
-bindsym $mod+$brightnessDown exec $i3Folder/bl-brightness.sh off && $i3Folder/refreshStatus.sh
+bindsym $brightnessUp exec sh ~/.i3/bl-brightness.sh up && sh ~/.i3/refreshStatus.sh
+bindsym $brightnessDown exec sh ~/.i3/bl-brightness.sh down && sh ~/.i3/refreshStatus.sh
+bindsym Shift+$brightnessUp exec sh ~/.i3/bl-brightness.sh UP && sh ~/.i3/refreshStatus.sh
+bindsym Shift+$brightnessDown exec sh ~/.i3/bl-brightness.sh DOWN && sh ~/.i3/refreshStatus.sh
+bindsym $mod+$brightnessUp exec sh ~/.i3/bl-brightness.sh on && sh ~/.i3/refreshStatus.sh
+bindsym $mod+$brightnessDown exec sh ~/.i3/bl-brightness.sh off && sh ~/.i3/refreshStatus.sh
 
 # you're stupid if you remove this
 workspace_auto_back_and_forth yes
@@ -162,13 +160,28 @@ mode "shortcuts" {
 }
 bindsym $mod+x exec ~/.i3/shortcutsBar.sh enable; mode "shortcuts"
 
+#bar {
+#        status_command ~/.i3/i3statusExtra.sh
+#	#font pango:DejaVu Sans Mono 6
+#	font pango:Source Code Pro 6
+#
+#	colors {
+#		background #161616
+#	}
+#}
+
 bar {
-        status_command $i3Folder/i3status.sh
-	#font pango:DejaVu Sans Mono 6
-	font pango:Source Code Pro 6
-
+	position top
 	colors {
-		background #161616
-	}
-}
+		background #000000
+		statusline #FFFFFF
+		separator #DF0101
 
+		focused_workspace #610B0B #8A0808 #FFFFFF
+		#active_workspace   #333333 #5f676a #ffffff
+		inactive_workspace #323232 #323232 #FFFFFF
+		urgent_workspace #DF0101 #FF0000 #FFFFFF
+	}
+        status_command ~/.i3/i3statusExtra.sh
+	font pango:Source Code Pro 8
+}

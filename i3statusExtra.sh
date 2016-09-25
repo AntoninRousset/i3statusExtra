@@ -1,5 +1,7 @@
 #!/bin/sh
 
+source ~/.i3/i3statusExtra.conf
+
 notificationFile="/tmp/notification"
 notificationTimeFile="/tmp/notificationTime"
 notificationDuration=3
@@ -12,7 +14,6 @@ cWhite="#ffffff"
 cGreen="#20c020"
 cOrange="#ffe000"
 cRed="#c00000"
-
 
 function block {
 	if [ -z $3 ]; then st="$2"; else st="$3"; fi
@@ -49,8 +50,7 @@ if [ "$1" == "notify" ]; then
 	exit 1
 fi
 
-
-i3status -c ~/.i3/i3status.conf | while :
+/usr/bin/i3status -c ~/.i3/i3status.conf | while :
 do
 	read line
 
@@ -69,18 +69,16 @@ shortcuts="$(~/.i3/shortcutsBar.sh)"
 	fi
 
 # SOUND VOLUME
-	sound=""
-	for i in $(getSoundCards); do
-		sound_cardId="$(echo $i | cut -d "=" -f 1)"
-		sound_cardName="$(echo $i | cut -d "=" -f 2)"
-		sound_cardVolume="$(getSoundCardVolume "$sound_cardId")"
-
-		if [ -z "$sound_cardVolume" ]; then
-			sound=$sound"$(block $cOrange "$sound_cardName " "$sound_cardId ")"
-		else
-			sound=$sound"$(block $cWhite "$sound_cardName   $sound_cardVolume" "$sound_cardId  $sound_cardVolume")"
-		fi
-	done
+	sound=''
+	if [ "$so_bar" == "true" ]; then
+		sound="$(sh ~/.i3/volume.sh get)"
+	fi
+	if [ "$(sh ~/.i3/volume.sh get state)" == "on" ]; then
+		sound="  $sound"
+	else
+		sound="    $sound"
+	fi
+	sound="$(block "$cWhite" "$sound")"
 
 # WIRELESS
 
@@ -148,7 +146,7 @@ shortcuts="$(~/.i3/shortcutsBar.sh)"
 
 
 # Backlight
-	bl_brightness="$(block "$cWhite" "☀ $(sh ~/.i3/bl-brightness.sh)%")" 
+	bl_brightness="$(block "$cWhite" "☀ $(sh ~/.i3/bl-brightness.sh get)%")" 
 
 # ECHO
 

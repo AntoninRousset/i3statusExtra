@@ -1,18 +1,18 @@
-#!/bin/bash
+#!/bin/sh
 
 source ~/.i3/i3statusExtra.conf
 
-if [ -z $1 ]; then
-	echo "bl-brightness: No argument given" > /dev/stderr
-	exit 1;
+if [ -z $1 ] || [ "$1" == "get" ]; then
+	printf "%.0f" "$(xbacklight -get)"
+	exit 0
 fi
 case "$1" in
 	up)
 		xbacklight -time 120 -inc $bl_step;;
-	UP)
-		xbacklight -time 40 -inc $bl_smallStep;;
 	down)
 		xbacklight -time 120 -dec $bl_step;;
+	UP)
+		xbacklight -time 40 -inc $bl_smallStep;;
 	DOWN)
 		xbacklight -time 40 -dec $bl_smallStep;;
 	on)

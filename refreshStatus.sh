@@ -1,3 +1,3 @@
 #!/bin/bash
 
-killall -USR1 /usr/bin/i3status
+killall -USR1 i3status
