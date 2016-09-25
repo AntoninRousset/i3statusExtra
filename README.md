@@ -7,3 +7,4 @@ Dependencies:
 - feh, to change wallpaper
 - xwd, to take screenshots
 - amixer, to control sound
+- fontawesome, nice sound/wifi/ethernet/battery characters
