@@ -12,8 +12,7 @@ fi
 case "$1" in
 	mute)
 		echo "mute" >> "log"
-		#if amixer -q -c 1 set PCM toggle; then exit 0; fi
-		if amixer -q -c 0 set Master toggle; then exit 0; fi
+		if amixer -q -c $so_card set $so_device toggle; then exit 0; fi
 		echo "volume: unable to mute'"$1"'" > /dev/stderr
 		exit 1;;
 	up)
@@ -29,7 +28,6 @@ case "$1" in
 		exit 1;;
 esac
 
-#if amixer -q -c 1 set PCM $amount unmute; then exit 0; fi
-if amixer -q -c 0 set Master $amount unmute; then exit 0; fi
+if amixer -q -c $so_card set $so_device $amount unmute; then exit 0; fi
 echo "volume: unable to change volume" > /dev/stderr
 exit 1
