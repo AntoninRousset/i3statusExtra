@@ -120,11 +120,11 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e i3-msg exit
 
 # sound
-bindsym $volumeUp exec sh ~/.i3/volume.sh up && sh ~/.i3/refreshStatus.sh
-bindsym $volumeDown exec sh ~/.i3/volume.sh down && sh ~/.i3/refreshStatus.sh
-bindsym $volumeMute exec sh ~/.i3/volume.sh mute && sh ~/.i3/refreshStatus.sh
-bindsym Shift+$volumeUp exec sh ~/.i3/volume.sh UP && sh ~/.i3/refreshStatus.sh
-bindsym Shift+$volumeDown exec sh ~/.i3/volume.sh DOWN && sh ~/.i3/refreshStatus.sh
+bindsym $volumeUp exec sh ~/.i3/sound.sh up && sh ~/.i3/refreshStatus.sh
+bindsym $volumeDown exec sh ~/.i3/sound.sh down && sh ~/.i3/refreshStatus.sh
+bindsym $volumeMute exec sh ~/.i3/sound.sh mute && sh ~/.i3/refreshStatus.sh
+bindsym Shift+$volumeUp exec sh ~/.i3/sound.sh UP && sh ~/.i3/refreshStatus.sh
+bindsym Shift+$volumeDown exec sh ~/.i3/sound.sh DOWN && sh ~/.i3/refreshStatus.sh
 
 # brightness
 bindsym $brightnessUp exec sh ~/.i3/bl-brightness.sh up && sh ~/.i3/refreshStatus.sh

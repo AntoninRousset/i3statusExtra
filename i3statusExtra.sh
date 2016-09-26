@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 source ~/.i3/i3statusExtra.conf
 
@@ -68,37 +68,50 @@ shortcuts="$(~/.i3/shortcutsBar.sh)"
 		fi
 	fi
 
-# SOUND VOLUME
-	sound=''
-	if [ "$so_bar" == "true" ]; then
-		sound="$(sh ~/.i3/volume.sh get)"
-	fi
-	if [ "$(sh ~/.i3/volume.sh get state)" == "on" ]; then
-		sound="  $sound"
-	else
-		sound="    $sound"
-	fi
-	sound="$(block "$cWhite" "$sound")"
+# Sound
+sound=''
+if [ "$so_bar" = true ]; then
+	set $(sh ~/.i3/sound.sh get)
+	if [ "$1" == "on" ]; then sound="$(block "$cWhite" "  $2")";
+	else sound="$(block "$cOrange" "   $2")"; fi
+fi
 
-# WIRELESS
-
-	w_ip="$(ifconfig | grep -A 2 wlan0 | awk '/^\s+inet\W/ {print $2}')"
-
-	if [ -z "$w_ip" ]; then
-		wireless="$(block "$cRed" " not connected" " -")"
-	else
-		wireless="$(block "$cGreen" " $w_ip" " $w_ip")"
-	fi
+# Wireless
+wireless=''
+if [ "$wi_bar" = true ]; then
+	set $(sh ~/.i3/wireless.sh get)
+	case "$1" in
+	COMPLETED)
+		wireless="$(block "$cGreen" " ${2:0:16} $3" " ${2:0:6}")";;
+	SCANNING)
+		wireless="$(block "$cOrange" " Scanning" " -")";;
+	DISCONNECTED)
+		wireless="$(block "$cRed" " Disconnected" " -")";;
+	ASSOCIATING)
+		wireless="$(block "$cOrange" " Associating" " +")";;
+	ASSOCIATED)
+		wireless="$(block "$cOrange" " Associated" " +")";;
+	AUTHENTICATING)
+		wireless="$(block "$cOrange" " Autentificating" " +")";;
+	4WAY_HANDSHAKE|GROUP_HANDSHAKE)
+		wireless="$(block "$cOrange" " Handshake" " +")";;
+	INACTIVE)
+		wireless="$(block "$cOrange" " Inactive" " +")";;
+	INTERFACE_DISABLED)
+		wireless="$(block "$cOrange" " Disabled" " +")";;
+	off)
+		wireless="$(block "$cRed" " OFF" " -")";;
+	esac
+fi
 
 # ETHERNET
+ip="$(ifconfig | grep -A 2 enp0s10 | awk '/^\s+inet\W/ {print $2}')"
 
-	e_ip="$(ifconfig | grep -A 2 enp0s10 | awk '/^\s+inet\W/ {print $2}')"
-
-	if [ -z "$e_ip" ]; then
-		ethernet="$(block "$cRed" " not connected" " -")"
-	else
-		ethernet="$(block "$cGreen" " $e_ip" " $e_ip")"
-	fi
+if [ -z "$e_ip" ]; then
+	ethernet="$(block "$cRed" " not connected" " -")"
+else
+	ethernet="$(block "$cGreen" " $e_ip" " $e_ip")"
+fi
 
 # IPV6
 	ipv6_ip="";

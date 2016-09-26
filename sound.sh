@@ -4,14 +4,11 @@ source ~/.i3/i3statusExtra.conf
 
 if [ -z $1 ] || [ "$1" == "get" ]; then
 	info="$(amixer -c 0 sget Master)"
-	if [ "$2" == "state" ]; then
-		echo "$(echo "$info" | awk -F"[][]" '/dB/ { print $6; exit;}')"
-		exit 0
-	fi
-	echo "$(echo "$info" | awk -F"[][]" '/dB/ { print $2; exit;}')"
+	echo "$(echo "$info" | awk -F"[][]" '/dB/ { print $6; exit;}')"\
+	     "$(echo "$info" | awk -F"[][]" '/dB/ { print $2; exit;}')"
 	exit 0
-
 fi
+
 case "$1" in
 	mute)
 		echo "mute" >> "log"
