@@ -99,7 +99,7 @@ if [ "$wi_bar" = true ]; then
 		wireless="$(block "$cOrange" " Inactive" " +")";;
 	INTERFACE_DISABLED)
 		wireless="$(block "$cOrange" " Disabled" " +")";;
-	off)
+	OFF)
 		wireless="$(block "$cRed" " OFF" " -")";;
 	esac
 fi
@@ -113,53 +113,32 @@ else
 	ethernet="$(block "$cGreen" " $e_ip" " $e_ip")"
 fi
 
-# IPV6
-	ipv6_ip="";
-	if [ "$w_ip" ]; then
-		ipv6_ip="$(ifconfig | grep -A 2 wlan0 | awk '/^\s+inet6\W/ {print $2}')"
-	fi
-
-	if [ -z "$ipv6_ip" -a "$e_ip" ]; then
-		ipv6_ip="$(ifconfig | grep -A 2 enp0s10 | awk '/^\s+inet6\W/ {print $2}')"
-		echo "asdkine $ipv6_ip" > /tmp/cards
-	fi
-
-	if [ "$ipv6_ip" ]; then
-		ipv6="$(block "$cGreen" "IPv6 $ipv6_ip" "$ipv6_ip")"
-	else
-		ipv6=""
-	fi
-		
-
 # BATTERY
 
-	b_charging=$(if [ "$(acpi | awk '{print $3}')" == "Charging," ]; then
-			echo ""
-		     fi)
-	b_charge_percent=$(acpi | awk 'BEGIN {FS="[% ]"} /Battery/ {print $4}')	
-
-	b_logos="    "
-	for i in `seq 1 5`; do
-		if [ "$b_charge_percent" -ge "$(echo "($i-1)*20" | bc)" ]; then
-			b_logo="$(echo "$b_logos" | cut -d " " -f $i )"
+battery=''
+if [ "$ba_bar" = true ]; then
+	set $(sh ~/.i3/battery.sh get)
+	logos="     "
+	for i in {0..8..2}; do
+		if [ $(echo $2 | tr -d '%') -le $((100-$i*12)) ]; then
+			logo=${logos:$i:2}
+		else
+			break
 		fi
 	done
-
-	if [ "$b_charge_percent" -le "$battery_alert" ]; then
-		b_color="$cRed"
-	elif [ "$b_charge_percent" -le "$battery_warning" ]; then
-		b_color="$cOrange"
-	elif [ "$b_charge_percent" -ge "$battery_good" ]; then
-		b_color="$cGreen"
-	else
-		b_color="$cWhite"
-	fi
-
-	battery="$(block "$b_color" "$b_charging $b_logo $b_charge_percent%" "$b_logo $b_charge_percent%" )"
-
+	if [ "$3" == "on-line" ]; then logo=" $logo"; fi
+	if [ $(echo $2 | tr -d '%') -le $ba_alert ]; then color="$cRed"
+	elif [ $(echo $2 | tr -d '%') -le $ba_warning ]; then color="$cOrange"
+	else color="$cGreen"; fi
+	battery="$(block "$color" "$logo$2" "$logo$2")"
+fi
 
 # Backlight
-	bl_brightness="$(block "$cWhite" "☀ $(sh ~/.i3/bl-brightness.sh get)%")" 
+	bl_brightness=''
+	if [ "$bl_bar" = true ]; then
+		set $(sh ~/.i3/bl-brightness.sh get)
+		bl_brightness="$(block "$cWhite" "☀ $1%")" 
+	fi
 
 # ECHO
 

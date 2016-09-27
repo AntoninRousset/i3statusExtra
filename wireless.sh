@@ -10,7 +10,7 @@ if [ -z $1 ] || [ "$1" == "get" ]; then
 		     "$(echo "$info" | sed -n -e 's/^ssid=//p')"\
 		     "$(echo "$info" | sed -n -e 's/^ip_address=//p')";;
 	*)
-		echo "off";;
+		echo "OFF";;
 	esac
 else
 	echo "wireless: invalid argument '"$1"'" > /dev/stderr
