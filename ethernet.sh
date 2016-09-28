@@ -15,6 +15,6 @@ if [ -z $1 ] || [ "$1" == "get" ]; then
 		echo "OFF";;
 	esac
 else
-	echo "wireless: invalid argument '"$1"'" > /dev/stderr
+	echo "ethernet: invalid argument '"$1"'" > /dev/stderr
 	exit 1
 fi

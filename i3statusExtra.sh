@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 source ~/.i3/i3statusExtra.conf
 
@@ -6,18 +6,16 @@ notificationFile="/tmp/notification"
 notificationTimeFile="/tmp/notificationTime"
 notificationDuration=3
 
-battery_good=80
-battery_warning=40
-battery_alert=10
-
 cWhite="#ffffff"
 cGreen="#20c020"
 cOrange="#ffe000"
 cRed="#c00000"
 
 function block {
-	if [ -z $3 ]; then st="$2"; else st="$3"; fi
-	echo '{ "color": "'"$1"'", "full_text": "'"$2"'", "short_text": "'"$st"'"},'
+	if [ -z "$3" ]; then st="$2"; else st="$3"; fi
+	echo '{ "color": "'"$1"'",'\
+	     '"full_text": "'"$2"'",'\
+	     '"short_text": "'"$st"'"},'
 }
 
 function getSoundCards {
@@ -28,19 +26,6 @@ function getSoundCards {
 						printf n"="$3" "
 					}
 			}')"
-}
-
-# return "" if muted
-function getSoundCardVolume {
-	soundCardInfo="$(amixer -c $1 sget Master)"
-	if [ -z "$soundCardInfo" ]; then
-		soundCardInfo="$(amixer -c $1 sget PCM 2>/dev/null)"
-	fi
-
-	
-	if [ "$(echo "$soundCardInfo" | awk -F"[][]" '/dB/ { print $6; exit;}')" == "on" ]; then
-		echo "$(echo "$soundCardInfo" | awk -F"[][]" '/dB/ { print $2; exit;}')"
-	fi
 }
 
 if [ "$1" == "notify" ]; then
@@ -57,18 +42,17 @@ do
 shortcuts="$(~/.i3/shortcutsBar.sh)"
 
 # NOTIFICATIONS
-	notification="$(cat $notificationFile 2>/dev/null)"
-	notificationTime="$(cat $notificationTimeFile 2>/dev/null)"
-	if [ "$notification" ]; then
-		notification="$(block "$cWhite" "$notification" "$notification")"
-		echo "$(( $notificationTime - 1 ))" > "$notificationTimeFile"
-		if [ "$notificationTime" -le "1" ]; then
-			echo '' > "$notificationFile"
-			echo '' > "$notificationTimeFile"
-		fi
+notification="$(cat $notificationFile 2>/dev/null)"
+notificationTime="$(cat $notificationTimeFile 2>/dev/null)"
+if [ "$notification" ]; then
+	notification="$(block "$cWhite" "$notification" "$notification")"
+	echo "$(( $notificationTime - 1 ))" > "$notificationTimeFile"
+	if [ "$notificationTime" -le "1" ]; then
+		echo '' > "$notificationFile"
+		echo '' > "$notificationTimeFile"
 	fi
+fi
 
-# Sound
 sound=''
 if [ "$so_bar" = true ]; then
 	set $(sh ~/.i3/sound.sh get)
@@ -76,7 +60,6 @@ if [ "$so_bar" = true ]; then
 	else sound="$(block "$cOrange" "   $2")"; fi
 fi
 
-# Wireless
 wireless=''
 if [ "$wi_bar" = true ]; then
 	set $(sh ~/.i3/wireless.sh get)
@@ -96,24 +79,28 @@ if [ "$wi_bar" = true ]; then
 	4WAY_HANDSHAKE|GROUP_HANDSHAKE)
 		wireless="$(block "$cOrange" " Handshake" " +")";;
 	INACTIVE)
-		wireless="$(block "$cOrange" " Inactive" " +")";;
+		wireless="$(block "$cRed" " Inactive" " x")";;
 	INTERFACE_DISABLED)
-		wireless="$(block "$cOrange" " Disabled" " +")";;
+		wireless="$(block "$cRed" " Disabled" " x")";;
 	OFF)
-		wireless="$(block "$cRed" " OFF" " -")";;
+		wireless="$(block "$cRed" " OFF" " x")";;
 	esac
 fi
 
-# ETHERNET
-ip="$(ifconfig | grep -A 2 enp0s10 | awk '/^\s+inet\W/ {print $2}')"
-
-if [ -z "$e_ip" ]; then
-	ethernet="$(block "$cRed" " not connected" " -")"
-else
-	ethernet="$(block "$cGreen" " $e_ip" " $e_ip")"
+ethernet=''
+if [ "$wi_bar" = true ]; then
+	set $(sh ~/.i3/ethernet.sh get)
+	case "$1" in
+	RUNNNING)
+		ethernet="$(block "$cGreen" " $2" " Connected")";;
+	CONNECTING)
+		ethernet="$(block "$cOrange" " $2" " +")";;
+	DISCONNECTED)
+		ethernet="$(block "$cRed" " Disconnected" " -")";;
+	OFF)
+		ethernet="$(block "$cRed" " OFF" " x")";;
+	esac
 fi
-
-# BATTERY
 
 battery=''
 if [ "$ba_bar" = true ]; then
@@ -133,20 +120,17 @@ if [ "$ba_bar" = true ]; then
 	battery="$(block "$color" "$logo$2" "$logo$2")"
 fi
 
-# Backlight
-	bl_brightness=''
-	if [ "$bl_bar" = true ]; then
-		set $(sh ~/.i3/bl-brightness.sh get)
-		bl_brightness="$(block "$cWhite" "☀ $1%")" 
-	fi
+backlight=''
+if [ "$bl_bar" = true ]; then
+	set $(sh ~/.i3/bl-brightness.sh get)
+	backlight="$(block "$cWhite" "☀ $1%")" 
+fi
 
-# ECHO
-
-	#cat /tmp/pouet
 if [ "$shortcuts" ]; then
 	echo "${line/\[*\]/\["$shortcuts"\]}"
 else
-	echo "${line/\[/\[$notification$ethernet$wireless$ipv6$bl_brightness$battery$sound}"
+	eval order="$order"
+	echo "${line/\[/\[$notification$order}"
 fi
 done
 
