@@ -1,11 +1,12 @@
-set $mod Mod4
+set $mod mod4
 set $brightnessUp XF86MonBrightnessUp
 set $brightnessDown XF86MonBrightnessDown
 set $volumeUp XF86AudioRaiseVolume 
 set $volumeDown XF86AudioLowerVolume
 set $volumeMute XF86AudioMute 
-set $wallpaperKey XF86LaunchA 
-set $screenshotKey XF86LaunchB 
+set $wallpaperKey XF86LaunchB
+set $lockKey XF86LaunchA
+#set $screenshotKey $mod+XF86LaunchB
 
 
 #exec feh --bg-fill "$HOME/.wallpaper"
@@ -26,16 +27,15 @@ for_window [class="Blender"] border pixel 2
 for_window [class="latexila"] border pixel 2
 
 hide_edge_borders both
-bindsym $mod+d exec dmenu_run -i
+bindsym $mod+d exec dmenu_run -i -fn 'pango:Source Code Pro'
 bindsym $mod+Return exec roxterm;
 bindsym $mod+dollar exec roxterm -e ranger
-#bindsym $mod+dollar exec pcmanfm
 bindsym $mod+exclam exec chromium
 bindsym $wallpaperKey exec ~/.i3/changeWallpaper.sh
-bindsym $screenshotKey exec ~/.i3/takeScreenshot.sh
+bindsym $mod+XF86LaunchB exec ~/.i3/takeScreenshot.sh
 
 # borderless
-bindsym $mod+Shift+f "border none"
+bindsym $mod+Shift+f "border toggle"
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -117,7 +117,7 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e i3-msg exit
+#bindsym $mod+Shift+e i3-msg exit
 
 # sound
 bindsym $volumeUp exec sh ~/.i3/sound.sh up && sh ~/.i3/refreshStatus.sh
@@ -125,6 +125,11 @@ bindsym $volumeDown exec sh ~/.i3/sound.sh down && sh ~/.i3/refreshStatus.sh
 bindsym $volumeMute exec sh ~/.i3/sound.sh mute && sh ~/.i3/refreshStatus.sh
 bindsym Shift+$volumeUp exec sh ~/.i3/sound.sh UP && sh ~/.i3/refreshStatus.sh
 bindsym Shift+$volumeDown exec sh ~/.i3/sound.sh DOWN && sh ~/.i3/refreshStatus.sh
+
+# music control
+bindsym XF86AudioNext exec echo "NextSong" >> ".config/gmusicbrowser/gmusicbrowser.fifo"
+bindsym XF86AudioPlay exec echo "PlayPause" >> ".config/gmusicbrowser/gmusicbrowser.fifo"
+bindsym XF86AudioPrev exec echo "PrevSong" >> ".config/gmusicbrowser/gmusicbrowser.fifo"
 
 # brightness
 bindsym $brightnessUp exec sh ~/.i3/bl-brightness.sh up && sh ~/.i3/refreshStatus.sh
@@ -136,6 +141,15 @@ bindsym $mod+$brightnessDown exec sh ~/.i3/bl-brightness.sh off && sh ~/.i3/refr
 
 # you're stupid if you remove this
 workspace_auto_back_and_forth yes
+
+# eject disk
+bindsym XF86Eject exec eject /dev/sr0
+
+# lock
+bindsym $lockKey exec lock
+
+# suspend after x seconds
+exec --no-startup-id xset dpms 60
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
