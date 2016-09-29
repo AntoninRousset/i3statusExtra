@@ -37,14 +37,14 @@ fi
 do
 	read line
 
-shortcuts="$(~/.i3/shortcutsBar.sh)"
+#shortcuts="$(~/.i3/shortcutsBar.sh)" TODO Causes SIGPIPE
 
 # NOTIFICATIONS
 notification=''
 if [ -f "$notificationFile" ]; then
 	notification="$(cat $notificationFile 2>/dev/null)"
 fi
-notificationTime="$(cat $notificationTimeFile 2>/dev/null)"
+#notificationTime="$(cat $notificationTimeFile 2>/dev/null)" # TODO Causes SIGPIPE
 if [ "$notification" ]; then
 	notification="$(block "$cWhite" "$notification" "$notification")"
 	echo "$(( $notificationTime - 1 ))" > "$notificationTimeFile"
