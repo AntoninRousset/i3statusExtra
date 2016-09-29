@@ -13,9 +13,7 @@ cRed="#c00000"
 
 function block {
 	if [ -z "$3" ]; then st="$2"; else st="$3"; fi
-	echo '{ "color": "'"$1"'",'\
-	     '"full_text": "'"$2"'",'\
-	     '"short_text": "'"$st"'"},'
+	echo '{"color": "'"$1"'", "full_text": "'"$2"'", "short_text": "'"$st"'"},'
 }
 
 function getSoundCards {
@@ -42,7 +40,10 @@ do
 shortcuts="$(~/.i3/shortcutsBar.sh)"
 
 # NOTIFICATIONS
-notification="$(cat $notificationFile 2>/dev/null)"
+notification=''
+if [ -f "$notificationFile" ]; then
+	notification="$(cat $notificationFile 2>/dev/null)"
+fi
 notificationTime="$(cat $notificationTimeFile 2>/dev/null)"
 if [ "$notification" ]; then
 	notification="$(block "$cWhite" "$notification" "$notification")"
@@ -129,8 +130,11 @@ fi
 if [ "$shortcuts" ]; then
 	echo "${line/\[*\]/\["$shortcuts"\]}"
 else
-	eval order="$order"
-	echo "${line/\[/\[$notification$order}"
+	out="$notification"
+	for cell in $order; do
+		out+="${!cell}"
+	done
+	echo "${line/\[/\[$out}"
 fi
 done
 

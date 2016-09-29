@@ -10,7 +10,10 @@ cRed="#c00000"
 
 names=( "Mount Bridge" "Turn on ethernet" "Turn on wifi" "Turn on laptop_mode" "Suspend")
 exes=( "mount /mnt/Bridge" "sudo rc-service net.enp0s10 start; sudo rc-service privoxy start" "sudo rc-service net.wlan0 start && sudo rc-service privoxy start" "sudo rc-service laptop_mode start" "sudp pm-suspend")
-selected="$(cat $SHORTCUTBAR_FILE)"
+selected=''
+if [ -f "$SHORTCUTBAR_FILE" ]; then
+	selected="$(cat $SHORTCUTBAR_FILE)"
+fi
 
 if [ "$(cat /etc/mtab | grep Bridge)" ]; then
 	names[0]="Umount Bridge"
